@@ -1,0 +1,469 @@
+<!DOCTYPE html>
+<html lang="ar" dir="rtl">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>لوحة التحكم - منصة ARCANE</title>
+
+    <style>
+        * {
+            margin: 0; padding: 0; box-sizing: border-box;
+            font-family: "Tajawal", -apple-system, BlinkMacSystemFont, 'Segoe UI', Roboto, sans-serif;
+        }
+
+        body {
+            background: #f8fafc;
+            color: #1e293b;
+        }
+
+        /* ---------------- Sidebar (Right RTL) ---------------- */
+        .sidebar {
+            position: fixed;
+            right: 0;
+            top: 0;
+            width: 260px;
+            height: 100vh;
+            background: linear-gradient(180deg, #667eea 0%, #764ba2 100%);
+            padding: 20px;
+            color: white;
+            overflow-y: auto;
+            z-index: 1000;
+        }
+
+        .sidebar-header {
+            display: flex;
+            align-items: center;
+            gap: 12px;
+            margin-bottom: 30px;
+            padding-bottom: 15px;
+            border-bottom: 1px solid rgba(255,255,255,0.2);
+        }
+
+        .logo-img {
+            width: 60px;
+            height: 60px;
+            border-radius: 10px;
+            object-fit: contain;
+        }
+
+        .sidebar-menu {
+            list-style: none;
+            margin-top: 20px;
+        }
+
+        .menu-item {
+            margin-bottom: 8px;
+        }
+
+        .menu-link {
+            display: flex;
+            align-items: center;
+            gap: 12px;
+            padding: 12px 16px;
+            text-decoration: none;
+            border-radius: 10px;
+            color: rgba(255,255,255,0.9);
+            transition: 0.3s;
+            font-size: 15px;
+        }
+
+        .menu-link:hover,
+        .menu-link.active {
+            background: rgba(255,255,255,0.25);
+            color: white;
+            font-weight: 600;
+        }
+
+        .menu-icon {
+            font-size: 20px;
+            width: 24px;
+            text-align: center;
+        }
+
+        .menu-divider {
+            height: 1px;
+            background: rgba(255,255,255,0.2);
+            margin: 20px 0;
+        }
+
+        /* ---------------- User Profile (Bottom) ---------------- */
+        .user-profile {
+            position: absolute;
+            bottom: 20px;
+            right: 20px;
+            left: 20px;
+            background: rgba(255,255,255,0.2);
+            border-radius: 10px;
+            padding: 12px;
+            display: flex;
+            align-items: center;
+            gap: 12px;
+        }
+
+        .user-avatar {
+            width: 40px;
+            height: 40px;
+            background: #fbbf24;
+            border-radius: 50%;
+            color: #000;
+            font-weight: 700;
+            font-size: 16px;
+            display: flex;
+            align-items: center;
+            justify-content: center;
+        }
+
+        .user-name {
+            font-size: 14px;
+            font-weight: 700;
+        }
+
+        .user-email {
+            font-size: 12px;
+            opacity: 0.9;
+        }
+
+        /* ---------------- Main Content ---------------- */
+        .main-content {
+            margin-right: 260px;
+            min-height: 100vh;
+        }
+
+        /* ---------------- Top Bar ---------------- */
+        .topbar {
+            background: white;
+            padding: 20px 30px;
+            display: flex;
+            justify-content: space-between;
+            align-items: center;
+            box-shadow: 0 2px 8px rgba(0,0,0,0.06);
+            position: sticky;
+            top: 0;
+            z-index: 500;
+        }
+
+        .topbar-left h1 {
+            font-size: 26px;
+            font-weight: 700;
+        }
+
+        .topbar-left p {
+            color: #64748b;
+            font-size: 14px;
+            margin-top: 4px;
+        }
+
+        .search-box input {
+            width: 270px;
+            padding: 10px 40px 10px 16px;
+            border: 2px solid #e2e8f0;
+            border-radius: 10px;
+            outline: none;
+        }
+
+        .search-box input:focus {
+            border-color: #667eea;
+        }
+
+        .search-box {
+            position: relative;
+        }
+
+        .search-icon {
+            position: absolute;
+            left: 12px;
+            top: 50%;
+            transform: translateY(-50%);
+            color: #94a3b8;
+        }
+
+        .notification-btn {
+            background: #f1f5f9;
+            border: none;
+            padding: 10px;
+            border-radius: 10px;
+            cursor: pointer;
+            position: relative;
+            font-size: 20px;
+        }
+
+        .notification-badge {
+            position: absolute;
+            top: -4px;
+            left: -4px;
+            background: #ef4444;
+            width: 18px;
+            height: 18px;
+            color: white;
+            font-size: 10px;
+            border-radius: 50%;
+            display: flex;
+            justify-content: center;
+            align-items: center;
+        }
+
+        /* ---------------- Dashboard ---------------- */
+        .dashboard-content {
+            padding: 30px;
+        }
+
+        .stats-grid {
+            display: grid;
+            grid-template-columns: repeat(auto-fit, minmax(240px, 1fr));
+            gap: 24px;
+            margin-bottom: 40px;
+        }
+
+        .stat-card {
+            background: white;
+            padding: 24px;
+            border-radius: 16px;
+            box-shadow: 0 2px 10px rgba(0,0,0,0.05);
+        }
+
+        .stat-value {
+            font-size: 34px;
+            font-weight: 700;
+            margin-bottom: 4px;
+        }
+
+        .stat-label {
+            color: #64748b;
+            margin-bottom: 8px;
+        }
+
+        .stat-change {
+            padding: 6px 10px;
+            background: #dcfce7;
+            color: #16a34a;
+            border-radius: 8px;
+            font-size: 12px;
+        }
+
+        /* ---------------- Projects ---------------- */
+        .projects-section {
+            background: white;
+            padding: 24px;
+            border-radius: 16px;
+            box-shadow: 0 2px 10px rgba(0,0,0,0.05);
+        }
+
+        .section-title {
+            font-size: 20px;
+            font-weight: 700;
+        }
+
+        .projects-grid {
+            display: grid;
+            grid-template-columns: repeat(auto-fit, minmax(290px, 1fr));
+            gap: 20px;
+            margin-top: 25px;
+        }
+
+        .project-card {
+            border: 2px solid #e2e8f0;
+            border-radius: 12px;
+            padding: 20px;
+            transition: 0.2s;
+        }
+
+        .project-card:hover {
+            border-color: #667eea;
+        }
+
+        .project-title {
+            font-size: 16px;
+            font-weight: 700;
+            margin-bottom: 6px;
+        }
+
+        .project-desc {
+            color: #64748b;
+            font-size: 13px;
+            line-height: 1.6;
+            margin-bottom: 12px;
+        }
+    </style>
+</head>
+
+<body>
+
+    <!-- Sidebar -->
+    <aside class="sidebar">
+
+        <div class="sidebar-header">
+            <img src="C:\Users\mahmo\OneDrive\Desktop\ARCANE\static\logo.jpg" class="logo-img">
+            <span style="font-size:20px; font-weight:700;">منصة ARCANE</span>
+        </div>
+
+        <ul class="sidebar-menu">
+            <li class="menu-item">
+                <a class="menu-link active">
+                    <span class="menu-icon">📊</span> لوحة التحكم
+                </a>
+            </li>
+            <li class="menu-item">
+                <a class="menu-link">
+                    <span class="menu-icon">📁</span> المشاريع
+                </a>
+            </li>
+            <li class="menu-item">
+                <a class="menu-link">
+                    <span class="menu-icon">📈</span> التحليلات
+                </a>
+            </li>
+            <li class="menu-item">
+                <a class="menu-link">
+                    <span class="menu-icon">🤖</span> النماذج الذكية
+                </a>
+            </li>
+            <li class="menu-item">
+                <a class="menu-link">
+                    <span class="menu-icon">📄</span> التقارير
+                </a>
+            </li>
+
+            <div class="menu-divider"></div>
+
+            <li class="menu-item">
+                <a class="menu-link">
+                    <span class="menu-icon">🛒</span> قطاع التجارة
+                </a>
+            </li>
+            <li class="menu-item">
+                <a class="menu-link">
+                    <span class="menu-icon">❤️</span> قطاع الصحة
+                </a>
+            </li>
+            <li class="menu-item">
+                <a class="menu-link">
+                    <span class="menu-icon">🎓</span> قطاع التعليم
+                </a>
+            </li>
+            <li class="menu-item">
+                <a class="menu-link">
+                    <span class="menu-icon">🏛️</span> القطاع الحكومي
+                </a>
+            </li>
+
+            <div class="menu-divider"></div>
+
+            <li class="menu-item">
+                <a class="menu-link">
+                    <span class="menu-icon">⚙️</span> الإعدادات
+                </a>
+            </li>
+            <li class="menu-item">
+                <a class="menu-link">
+                    <span class="menu-icon">💬</span> الدعم الفني
+                </a>
+            </li>
+        </ul>
+
+        <div class="user-profile">
+            <div class="user-avatar">ف.م</div>
+            <div>
+                <div class="user-name">فريق ARCANE</div>
+                <div class="user-email">support@arcane.com</div>
+            </div>
+        </div>
+
+    </aside>
+
+    <!-- Main Content -->
+    <main class="main-content">
+
+        <!-- Topbar -->
+        <div class="topbar">
+            <div class="topbar-left">
+                <h1>مرحبًا بعودتك</h1>
+                <p>فيما يلي لمحة حول أحدث أنشطة مشاريعك</p>
+            </div>
+
+            <div class="topbar-right">
+                <div class="search-box">
+                    <input type="text" placeholder="بحث في المشاريع...">
+                    <span class="search-icon">🔍</span>
+                </div>
+
+                <button class="notification-btn">
+                    🔔
+                    <div class="notification-badge">3</div>
+                </button>
+            </div>
+        </div>
+
+        <!-- Dashboard Content -->
+        <div class="dashboard-content">
+
+            <!-- Statistics Cards -->
+            <div class="stats-grid">
+                <div class="stat-card">
+                    <div class="stat-value">12</div>
+                    <div class="stat-label">مشروع نشط</div>
+                    <span class="stat-change">+ 2 خلال هذا الأسبوع</span>
+                </div>
+
+                <div class="stat-card">
+                    <div class="stat-value">28</div>
+                    <div class="stat-label">نموذج مدرّب</div>
+                    <span class="stat-change">+ 5 خلال هذا الشهر</span>
+                </div>
+
+                <div class="stat-card">
+                    <div class="stat-value">94.5%</div>
+                    <div class="stat-label">متوسط الدقة</div>
+                    <span class="stat-change">+ 2.3% تحسن</span>
+                </div>
+
+                <div class="stat-card">
+                    <div class="stat-value">2.5K</div>
+                    <div class="stat-label">عدد التنبؤات</div>
+                    <span class="stat-change">+ 12% هذا الأسبوع</span>
+                </div>
+            </div>
+
+            <!-- Projects List -->
+            <div class="projects-section">
+                <h2 class="section-title">المشاريع الحديثة</h2>
+
+                <div class="projects-grid">
+                    <div class="project-card">
+                        <h3 class="project-title">نموذج التنبؤ بالمبيعات</h3>
+                        <p class="project-desc">تحليل بيانات المبيعات التاريخية للتنبؤ بمبيعات الربع القادم</p>
+                    </div>
+
+                    <div class="project-card">
+                        <h3 class="project-title">تحليل مخاطر المرضى</h3>
+                        <p class="project-desc">تحديد المرضى ذوي الخطورة العالية باستخدام خوارزميات التصنيف</p>
+                    </div>
+
+                    <div class="project-card">
+                        <h3 class="project-title">نموذج أداء الطلاب</h3>
+                        <p class="project-desc">التنبؤ المبكر بالطلاب المعرّضين لخطر التعثر الأكاديمي</p>
+                    </div>
+
+                    <div class="project-card">
+                        <h3 class="project-title">تحليل رضا المواطنين</h3>
+                        <p class="project-desc">تحليل آراء المواطنين حول جودة الخدمات باستخدام تحليل المشاعر</p>
+                    </div>
+                </div>
+
+            </div>
+
+        </div>
+
+    </main>
+
+    <script>
+        // تحريك زر الفلاتر
+        document.querySelectorAll('.filter-btn').forEach(btn => {
+            btn.onclick = () => {
+                document.querySelectorAll('.filter-btn').forEach(b => b.classList.remove('active'));
+                btn.classList.add('active');
+            };
+        });
+    </script>
+
+</body>
+</html>
